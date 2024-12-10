@@ -1,16 +1,6 @@
 import userModel from "../../DB/models/user.model.js";
+import { errorHandling } from "../../utils/errorHandling.js";
 
-
-const errorHandling = (error, res) => {
-    if (error.name == 'SequelizeValidationError') {
-        const errorDetails = error.errors.map((err) => {
-            return { message: err.message, field: err.path }
-        })
-        return res.json({ msg: "validastion error", errorDetails });
-
-    }
-    return res.json({ msg: "error", error });
-}
 
 export const gerUsers = async (req, res, next) => {
     try {

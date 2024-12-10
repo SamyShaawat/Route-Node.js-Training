@@ -14,7 +14,12 @@ const userModel = sequelize.define("User", {
         allowNull: false,
         validate: {
             len: [3, 8]
-        }
+        },
+        // get() {
+        //     return this.getDataValue("gender") == 'male'
+        //         ?
+        //         "mr" + this.getDataValue("fName") : "mrs:" + this.getDataValue("fName")
+        // }
     },
     lName: {
         type: DataTypes.STRING,
@@ -25,6 +30,25 @@ const userModel = sequelize.define("User", {
                     throw new Error(" invalid ayman")
                 }
             }
+        },
+        set(value) {
+            this.setDataValue("lName", value.toUpperCase())
+        }
+    },
+    fullName: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return this.getDataValue("fName") + " " + this.getDataValue("lName")
+        },
+        set(value) {
+            console.log(value);
+            const [fName, lName] = value.split(" ")
+
+            this.setDataValue("fName", fName)
+            this.setDataValue("lName", lName)
+            
+
+
         }
     },
     email: {
