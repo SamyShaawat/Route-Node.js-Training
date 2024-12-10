@@ -1,5 +1,5 @@
 {
-  "name": "session-8",
+  "name": "session-8-sequelize",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
@@ -11,7 +11,7 @@
   "keywords": [],
   "author": "Samy Mostafa Shaawat",
   "license": "ISC",
-  "description": "Session 8",
+  "description": "Session-8-Sequelize",
   "dependencies": {
     "express": "^4.21.1",
     "mariadb": "^3.4.0",

@@ -1,5 +1,5 @@
 {
-  "name": "session-7",
+  "name": "session-7-my-sql",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -8,12 +8,15 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Samy Mostafa Samy",
   "license": "ISC",
-  "description": "",
+  "description": "session-7-my-SQL",
   "dependencies": {
     "express": "^4.21.1",
+    "mariadb": "^3.4.0",
     "mysql2": "^3.11.5",
-    "nodemon": "^3.1.7"
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.5"
   }
 }
