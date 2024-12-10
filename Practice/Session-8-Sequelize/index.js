@@ -1,13 +1,10 @@
-import express, { json } from 'express';
+import express from 'express';
+import bootstrap from './src/app.controller.js';
 
 const port = 3000;
 const app = express();
 
-app.use(express.json());
-
-app.use("*", (req, res, next) => {
-    res.status(404).json({ message: `${req.originalUrl} not found` });
-})
+bootstrap(app, express);
 app.listen(port, () => {
     console.log(`listening on port ${port}`);
 
