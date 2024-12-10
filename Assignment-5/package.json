@@ -1,0 +1,18 @@
+{
+  "name": "assignment-5",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Samy Mostafa Shaawat",
+  "license": "ISC",
+  "description": "Assignment 5",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
