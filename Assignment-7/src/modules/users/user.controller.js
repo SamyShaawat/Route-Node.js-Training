@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { getUsers } from "./user.service.js";
+import { getUsers, signUp } from "./user.service.js";
 const userRouter = Router();
 
 
+userRouter.post("/signup", signUp)
 userRouter.get("/", getUsers)
+
 
 
 
