@@ -2,7 +2,7 @@ import connection from "../../DB/connectionDB.js";
 
 export const signUp = (req, res) => {
     const { email, firstName, lastName, role, password } = req.body;
-    connection.execute(`select email from users where email = '${email}'`, (err, result) => {
+    connection.execute(`select * from users where email = '${email}'`, (err, result) => {
         if (err) {
             return res.status(500).json({ message: 'Error on select query', error: err.message });
         }
@@ -27,6 +27,51 @@ export const signUp = (req, res) => {
 };
 
 
+export const logIn = (req, res) => {
+    const { email, password } = req.body;
+
+    connection.execute(`select * from users where email = '${email}'`, (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error on select query', error: err.message });
+        }
+
+        if (result.length == 0) {
+            return res.status(400).json({ message: 'User not found' });
+        }
+        // console.log(result);
+        const user = result[0];
+        // console.log(user.password);
+        if (user.password == password) {
+            return res.status(200).json({ message: 'Done, logged in.' });
+        } else {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+    });
+};
+
+export const alterTable = (req, res) => {
+    const { email } = req.body;
+    connection.execute(`SELECT role FROM users WHERE email = '${email}'`, (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error on select query', error: err.message });
+        }
+
+        if (result.length == 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (result[0].role !== 'admin') {
+            return res.status(403).json({ message: "You don't have access." });
+        }
+
+        connection.execute(`ALTER TABLE users ADD createdAt TIMESTAMP DEFAULT NOW()`, (err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error on alter query', error: err.message });
+            }
+            return res.status(200).json({ message: 'Done, Table altered successfully' });
+        });
+    });
+};
 
 export const getUsers = async (req, res, next) => {
     try {
