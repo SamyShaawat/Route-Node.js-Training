@@ -60,7 +60,7 @@ export const alterTable = (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        if (result[0].role !== 'admin') {
+        if (result[0].role != 'admin') {
             return res.status(403).json({ message: "You don't have access." });
         }
 
@@ -73,9 +73,33 @@ export const alterTable = (req, res) => {
     });
 };
 
-export const getUsers = async (req, res, next) => {
-    try {
-    } catch (error) {
-
-    }
-}
+export const truncateTable = (req, res) => {
+    const { email } = req.body;
+    connection.execute(`SELECT role FROM users WHERE email = '${email}'`, (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error on select query', error: err.message });
+        }
+        if (result.length == 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        if (result[0].role != 'admin') {
+            return res.status(403).json({ message: "You don't have access." });
+        }
+        connection.execute(`SET foreign_key_checks = 0;`, (err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error on set query', error: err.message });
+            }
+            connection.execute(`DELETE FROM user_products`, (err) => {
+                if (err) {
+                    return res.status(500).json({ message: 'Error on delete query', error: err.message });
+                }
+                connection.execute(`TRUNCATE TABLE products`, (err, result) => {
+                    if (err) {
+                        return res.status(500).json({ message: 'Error on truncate query', error: err.message });
+                    }
+                    res.status(200).json({ message: 'Done, Product table truncated successfully.' });
+                });
+            });
+        });
+    });
+};
