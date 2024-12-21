@@ -26,7 +26,6 @@ export const signUp = (req, res) => {
     });
 };
 
-
 export const logIn = (req, res) => {
     const { email, password } = req.body;
 
