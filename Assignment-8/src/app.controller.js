@@ -1,5 +1,6 @@
 import { checkConnectionDB, checkSyncDB } from "./DB/connectionDB.js";
-import productRouter from "./modules/products/product.controller.js";
+import commentRouter from "./modules/comments/comment.controller.js";
+import postRouter from "./modules/posts/post.controller.js";
 import userRouter from "./modules/users/user.controller.js";
 
 const bootstrap = (app, express) => {
