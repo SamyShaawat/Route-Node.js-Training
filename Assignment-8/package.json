@@ -1,5 +1,5 @@
 {
-  "name": "assignment-7",
+  "name": "assignment-8",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
@@ -10,7 +10,7 @@
   "keywords": [],
   "author": "Samy Mostafa Shaawat",
   "license": "ISC",
-  "description": "assignment-7",
+  "description": "assignment-8",
   "dependencies": {
     "express": "^4.21.1",
     "mariadb": "^3.4.0",
