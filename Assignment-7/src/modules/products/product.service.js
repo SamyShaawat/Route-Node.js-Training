@@ -100,3 +100,54 @@ export const getAllNotSoftDeleted = (req, res) => {
         res.status(200).json({ products: result });
     });
 };
+
+export const getProductsWithUsers = (req, res) => {
+    const query = `
+        SELECT 
+            products.name AS productName, 
+            users.email AS userEmail 
+        FROM products 
+        JOIN users ON products.userId = users.id;
+    `;
+
+    connection.execute(`SELECT products.name AS productName, users.email AS userEmail 
+                        FROM products 
+                        JOIN users ON products.userId = users.id;`, (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error on SELECT query', error: err.message });
+        }
+        if (result.length == 0) {
+            return res.status(404).json({ message: 'No products or users found.' });
+        }
+        res.status(200).json({ products: result });
+    });
+};
+
+export const getMaxPrice = (req, res) => {
+    connection.execute(`SELECT MAX(price) AS maxPrice FROM products;`, (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error on SELECT query', error: err.message });
+        }
+        if (result.length == 0 || result[0].maxPrice == null) {
+            return res.status(404).json({ message: 'No products found.' });
+        }
+        res.status(200).json({ maxPrice: result[0].maxPrice });
+    });
+};
+
+export const getTopExpensiveProducts = (req, res) => {
+    connection.execute(`SELECT name, price
+                        FROM products
+                        WHERE isDeleted = false
+                        ORDER BY price DESC
+                        LIMIT 5;`, (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error on SELECT query', error: err.message });
+        }
+        if (result.length == 0) {
+            return res.status(404).json({ message: 'No products found.' });
+        }
+        res.status(200).json({ products: result });
+    });
+};
+
