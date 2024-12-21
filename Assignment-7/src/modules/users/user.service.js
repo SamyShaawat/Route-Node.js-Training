@@ -88,7 +88,7 @@ export const truncateTable = (req, res) => {
             if (err) {
                 return res.status(500).json({ message: 'Error on set query', error: err.message });
             }
-            connection.execute(`DELETE FROM user_products`, (err) => {
+            connection.execute(`DELETE FROM users_products`, (err) => {
                 if (err) {
                     return res.status(500).json({ message: 'Error on delete query', error: err.message });
                 }
