@@ -1,0 +1,23 @@
+{
+  "name": "session-10-mongoose",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "keywords": [],
+  "author": "Samy Mostafa Shaawat",
+  "license": "ISC",
+  "description": "Session-10-Mongoose",
+  "dependencies": {
+    "express": "^4.21.1",
+    "mongoose": "^8.9.2",
+    "mysql2": "^3.11.5",
+    "sequelize": "^6.37.5"
+  },
+  "devDependencies": {
+    "eslint": "^9.16.0"
+  }
+}
