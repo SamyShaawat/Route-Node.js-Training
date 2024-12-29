@@ -1,6 +1,6 @@
-import  userModel  from "./models/user.model.js";
-import  Post from "./models/post.model.js";
-import  Comment  from "./models/comment.model.js";
+import userModel from "./models/user.model.js";
+import Post from "./models/post.model.js";
+import Comment from "./models/comment.model.js";
 
 const setupAssociations = () => {
     userModel.hasMany(Post, { foreignKey: "userId" });

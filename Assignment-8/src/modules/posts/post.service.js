@@ -2,16 +2,17 @@ import Post from "../../DB/models/post.model.js";
 import userModel from "../../DB/models/user.model.js";
 import Comment from "../../DB/models/comment.model.js";
 import { errorHandling } from "../../utils/errorHandling.js";
+import { sequelize } from "../../DB/connectionDB.js";
 
 
 export const addPost = async (req, res) => {
     try {
         const { title, content, userId } = req.body;
 
-        const newPost = new Post({title,content,userId,});
+        const newPost = new Post({ title, content, userId, });
         await newPost.save();
 
-        return res.status(201).json({msg: "Post created successfully.", post: newPost});
+        return res.status(201).json({ msg: "Post created successfully.", post: newPost });
     } catch (error) {
         errorHandling(error, res);
     }
@@ -43,20 +44,43 @@ export const deletePost = async (req, res) => {
 export const getPostDetails = async (req, res) => {
     try {
         const posts = await Post.findAll({
-            attributes: ["id", "title"], 
+            attributes: ["id", "title"],
             include: [
                 {
                     model: userModel,
-                    attributes: ["id", "name"], 
+                    attributes: ["name"],
                 },
                 {
                     model: Comment,
-                    attributes: ["id", "content"], 
+                    attributes: ["id", "content"],
                 },
             ],
         });
 
         return res.status(200).json(posts);
+    } catch (error) {
+        errorHandling(error, res);
+    }
+};
+
+export const commentCount = async (req, res) => {
+    try {
+        const posts = await Post.findAll({
+            attributes: [
+                "id",
+                "title",
+                [sequelize.fn("COUNT", sequelize.col("comments.id")), "commentCount"],
+            ],
+            include: [
+                {
+                    model: Comment,
+                    attributes: [],
+                },
+            ],
+            group: ["posts.id"],
+        });
+
+        res.status(200).json(posts.map(post => post.toJSON()));
     } catch (error) {
         errorHandling(error, res);
     }
