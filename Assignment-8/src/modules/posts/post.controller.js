@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { getAllPosts } from "./post.service.js";
+import { addPost, deletePost, getPostDetails } from "./post.service.js";
 const postRouter = Router();
 
 
-
-postRouter.get("/", getAllPosts);
-
+postRouter.post("/add-post", addPost);
+postRouter.delete("/delete-post/:postId", deletePost);
+postRouter.get("/get-post-details", getPostDetails);
 
 
 export default postRouter;
