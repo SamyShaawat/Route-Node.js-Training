@@ -1,5 +1,5 @@
 {
-  "name": "session-10-mongoose",
+  "name": "session-10-mongodb",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
@@ -10,7 +10,7 @@
   "keywords": [],
   "author": "Samy Mostafa Shaawat",
   "license": "ISC",
-  "description": "Session-10-Mongoose",
+  "description": "Session-10-mongodb",
   "dependencies": {
     "express": "^4.21.1",
     "mongodb": "^6.12.0",
