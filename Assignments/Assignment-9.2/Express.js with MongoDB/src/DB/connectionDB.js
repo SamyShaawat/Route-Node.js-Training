@@ -3,7 +3,7 @@ import { MongoClient } from 'mongodb'
 const url = 'mongodb://127.0.0.1:27017';
 const client = new MongoClient(url);
 
-const dbName = 'assignment-9.2';
+const dbName = 'assignment-9_2';
 
 export const db = client.db(dbName);
 export const connectionDB = async () => {
