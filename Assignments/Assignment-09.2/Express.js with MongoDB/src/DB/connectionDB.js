@@ -9,7 +9,7 @@ export const db = client.db(dbName);
 export const connectionDB = async () => {
   await client.connect()
     .then(() => {
-      console.log("Connected to MongoDB");
+      console.log(`Connected to MongoDB ${dbName}`);
     })
     .catch((err) => {
       console.log("Error connecting to MongoDB", err);
