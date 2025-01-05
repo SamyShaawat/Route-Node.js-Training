@@ -44,7 +44,7 @@ const Home = () => {
                     <td>{user.age}</td>
                     <td>{user.gender}</td>
                     <td>
-                      <button className="btn btn-sm btn-info">Read</button>
+                      <Link to={`/read/${user.id}`}className="btn btn-sm btn-info">Read</Link>
                       <button className="btn btn-sm btn-warning mx-2">
                         Edit
                       </button>
