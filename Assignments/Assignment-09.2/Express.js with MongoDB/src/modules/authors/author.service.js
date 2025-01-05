@@ -1,7 +1,16 @@
-import { db } from "../../DB/connectionDB.js";
 import authorModel from "../../DB/models/author.model.js";
 
 import { ObjectId } from "mongodb";
+
+export const createAuthorCollection = async (req, res) => {
+    try {
+        const { name, nationality } = req.body;
+        await authorModel.insertOne({ name, nationality });
+        return res.status(201).json({ message: "'authors' collection created successfully" });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
 
 export const addAuthor = async (req, res) => {
     try {

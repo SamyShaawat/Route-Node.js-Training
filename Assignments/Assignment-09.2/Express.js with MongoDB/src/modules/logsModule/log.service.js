@@ -3,12 +3,17 @@ import logModel from "../../DB/models/log.model.js";
 
 import { ObjectId } from "mongodb";
 
-const createCappedCollection = async () => {
-    await db.createCollection("logs", { capped: true, size: 1048576 });
+export const createCappedCollection = async (req, res) => {
+    try {
+        await db.createCollection("logs", { capped: true, size: 1048576 });
+        return res.status(201).json({ message: "'logs' collection created successfully" });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
 };
 
 const updateBookID = async () => {
-    await db.collection("logs").updateMany({ "book_id": { $type: "string" } }, [{ $set: { "book_id": { $toObjectId: "$book_id" } } }]);
+    await logModel.updateMany({ "book_id": { $type: "string" } }, [{ $set: { "book_id": { $toObjectId: "$book_id" } } }]);
 }
 
 export const addLog = async (req, res) => {
@@ -21,7 +26,6 @@ export const addLog = async (req, res) => {
         if (!action) {
             return res.status(400).json({ error: "action is required" });
         }
-        await createCappedCollection();
         const result = await logModel.insertOne({ book_id, action });
         await updateBookID();
         return res.status(201).json({ message: "Log added to 'logs' collection", result });

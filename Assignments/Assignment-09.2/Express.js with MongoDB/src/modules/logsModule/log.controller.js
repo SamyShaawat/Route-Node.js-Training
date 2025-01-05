@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { addLog } from "./log.service.js";
+import { addLog, createCappedCollection } from "./log.service.js";
 const logRouter = Router();
 
 
 
-
+logRouter.post("/create-log", createCappedCollection);
 logRouter.post("/add-log", addLog);
 
 export default logRouter;
