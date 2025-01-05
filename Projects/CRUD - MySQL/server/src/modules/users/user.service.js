@@ -8,3 +8,12 @@ export const getAllUsers = (req, res) => {
     })
 };
 
+export const createUser = (req, res) => {
+    const { name, email, age, gender } = req.body;
+    const sql = `INSERT INTO users (name, email, age, gender) VALUES('${name}', '${email}', '${age}', '${gender}')`;
+    connection.query(sql, (err, result) => {
+        if (err) return res.json(err);
+        return res.json(result);
+    })
+};
+
