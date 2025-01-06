@@ -114,7 +114,7 @@ db.books.aggregate([{ $match: { year: { $gt: 2000 }}}, { $project: { title: 1, a
 #### Question 18: Using aggregation functions,break an array of genres into separate documents
 
 ```mongosh
-db.books.aggregate([{ $unwind: "$genres" }]);
+db.books.aggregate([{ $unwind: "$genres" }, { $project: { _id: 0, title: 1, genres: 1 } }]);
 ```
 
 #### Question 19: Using aggregation functions, Join the books collection with the logs collection
@@ -128,5 +128,5 @@ db.logs.updateMany({ "book_id": { $type: "string" }}, [{$set: {"book_id": { $toO
 - Then Join the books collection with the logs collection.
 
 ```mongosh
-db.logs.aggregate([{ $lookup: { from: "books", localField: "book_id", foreignField: "_id", as: "book_details" }}, {$project: {action: 1, book_details: 1, _id:0 }}])
+db.books.aggregate([{ $lookup: { from: "logs", localField: "_id", foreignField: "book_id", as: "logDetails" } }, { $unwind: "$logDetails" }, { $project: { _id: 0, action: "$logDetails.action", book_details: [{ title: "$title", author: "$author", year: "$year" }] } }]).toArray();
 ```

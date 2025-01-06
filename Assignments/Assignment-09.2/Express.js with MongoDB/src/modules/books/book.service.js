@@ -131,3 +131,105 @@ export const findBooksByGenre = async (req, res) => {
         return res.status(500).json({ error: err.message });
     }
 };
+
+export const getBooksWithSkipLimit = async (req, res) => {
+    try {
+
+        const books = await bookModel.find({}).sort({ year: -1 }).skip(2).limit(3).toArray();
+
+        if (!books.length) {
+            return res.status(404).json({ message: "No books found." });
+        }
+
+        return res.status(200).json(books);
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+
+export const getBooksWithYearAsInteger = async (req, res) => {
+    try {
+        const books = await bookModel.find({ year: { $type: "int" } }).toArray();
+        if (!books.length) {
+            return res.status(404).json({ message: "No books found." });
+        }
+        return res.status(200).json(books);
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+
+export const getBooksExcludingGenres = async (req, res) => {
+    try {
+        const books = await bookModel.find({ genres: { $nin: ["Horror", "Science Fiction"] } }).toArray();
+        if (!books.length) {
+            return res.status(404).json({ message: "No books found." });
+        }
+        return res.status(200).json(books);
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+
+export const deleteBooksBeforeYear = async (req, res) => {
+    try {
+        const { year } = req.query;
+        if (!year) {
+            return res.status(400).json({ error: "Year query parameter is required." });
+        }
+        const result = await bookModel.deleteMany({ year: { $lt: Number(year) } });
+
+        if (result.deletedCount == 0) {
+            return res.status(404).json({ message: "No books found." });
+        }
+        return res.status(200).json({ message: `${result.deletedCount} books deleted successfully.` });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+
+export const aggregateBooksAfterYear = async (req, res) => {
+    try {
+        const { year } = req.query;
+        if (!year) {
+            return res.status(400).json({ error: "Year query parameter is required." });
+        }
+        const result = await bookModel.aggregate([{ $match: { year: { $gt: Number(year) } } }, { $sort: { year: -1 } }]).toArray();
+        return res.status(200).json({ books: result });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+
+export const aggregateBooksWithFields = async (req, res) => {
+    try {
+        const { year } = req.query;
+        if (!year) {
+            return res.status(400).json({ error: "Year query parameter is required." });
+        }
+        const result = await bookModel.aggregate([{ $match: { year: { $gt: Number(year) } } }, { $project: { title: 1, author: 1, year: 1, _id: 0 } }]).toArray();
+        return res.status(200).json({ books: result });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+
+export const aggregateUnwindGenres = async (req, res) => {
+    try {
+        const result = await bookModel.aggregate([{ $unwind: "$genres" }, { $project: { _id: 0, title: 1, genres: 1 } }]).toArray();
+        return res.status(200).json({ genres: result });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+
+export const aggregateJoinWithLogs = async (req, res) => {
+    try {
+        const result = await bookModel.aggregate([{ $lookup: { from: "logs", localField: "_id", foreignField: "book_id", as: "logDetails" } }, { $unwind: "$logDetails" }, { $project: { _id: 0, action: "$logDetails.action", book_details: [{ title: "$title", author: "$author", year: "$year" }] } }]).toArray();
+
+        return res.status(200).json({ booksWithLogs: result });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+
