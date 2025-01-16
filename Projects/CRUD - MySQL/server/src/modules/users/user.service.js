@@ -17,3 +17,14 @@ export const createUser = (req, res) => {
     })
 };
 
+export const readUser = (req, res) => {
+    const id = req.params.id;
+
+    const sql = `SELECT * FROM users where id = '${id}'`;
+    connection.query(sql, (err, result) => {
+        if (err) return res.json({ Message: "Error inside server" })
+        return res.json(result);
+    })
+};
+
+

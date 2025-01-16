@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [data, setData] = useState([]);
@@ -19,7 +19,7 @@ const Home = () => {
             <h2>Student List</h2>
             <div className="d-flex justify-content-end">
               <Link to="/create" className="btn btn-success">
-              Create +
+                Create +
               </Link>
             </div>
           </div>
@@ -44,7 +44,12 @@ const Home = () => {
                     <td>{user.age}</td>
                     <td>{user.gender}</td>
                     <td>
-                      <Link to={`/read/${user.id}`}className="btn btn-sm btn-info">Read</Link>
+                      <Link
+                        to={`/read/${user.id}`}
+                        className="btn btn-sm btn-info"
+                      >
+                        Read
+                      </Link>
                       <button className="btn btn-sm btn-warning mx-2">
                         Edit
                       </button>
