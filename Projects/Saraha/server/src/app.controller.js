@@ -1,4 +1,4 @@
-import { connectionDB } from "./DB/connectionDB.js";
+import  connectionDB  from "./DB/connectionDB.js";
 import userRouter from "./modules/users/user.controller.js";
 
 
