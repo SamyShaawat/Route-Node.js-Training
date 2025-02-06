@@ -4,30 +4,30 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+        required: [true, "name is required"],
         lowercase: true,
-        minLength: 3,
+        minLength: [3, "min length of name is 3"],
         maxLength: 10
     },
     email: {
         type: String,
-        required: true,
+        required: [true, "email is required"],
         lowercase: true,
         unique: true,
         match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     },
     password: {
         type: String,
-        required: true,
+        required: [true, "password is required"],
         minLength: 8
     },
     phone: {
         type: String,
-        required: true,
+        required: [true, "phone is required"],
     },
     gender: {
         type: String,
-        required: true,
+        required: [true, "gender is required"],
         enum: ["Male", "Female"]
     },
     confirmed: {
@@ -35,10 +35,10 @@ const userSchema = new mongoose.Schema({
         default: false
     }
 },
-{
-    timestamps: true,
-    autoCreate: true,
-}
+    {
+        timestamps: true,
+        autoCreate: true,
+    }
 );
 
 const userModel = mongoose.model.User || mongoose.model("User", userSchema);
