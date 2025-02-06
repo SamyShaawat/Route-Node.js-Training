@@ -1,6 +1,7 @@
 import userModel from "../../DB/models/user.model.js"
 import bcrypt from "bcrypt"
 import CryptoJS from "crypto-js"
+import jwt from "jsonwebtoken"
 
 export const signUp = async (req, res, next) => {
     try {
@@ -47,7 +48,26 @@ export const signIn = async (req, res, next) => {
             return res.status(400).json({ msg: "invalid Password" })
         }
 
+        const token = jwt.sign({ email }, "secretKeySamy", { expiresIn: "1h" })
 
+        return res.status(201).json({ msg: "done", token })
+    } catch (error) {
+        return res.status(500).json({ msg: "Error: ", message: error.message, stack: error.stack, error });
+
+    }
+}
+
+export const getProfile = async (req, res, next) => {
+    try {
+        const { authorization } = req.body
+        if (!authorization) {
+            return res.status(400).json({ msg: "token not found" })
+        }
+        const decoded = jwt.verify(authorization, "secretKeySamy")
+        const user = await userModel.findOne({ email: decoded.email })
+        if (!user) {
+            return res.status(400).json({ msg: "user not found" })
+        }
         return res.status(201).json({ msg: "done", user })
     } catch (error) {
         return res.status(500).json({ msg: "Error: ", message: error.message, stack: error.stack, error });
