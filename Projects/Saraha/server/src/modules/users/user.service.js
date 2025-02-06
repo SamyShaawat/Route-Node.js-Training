@@ -1,5 +1,5 @@
 import userModel from "../../DB/models/user.model.js"
-
+import bcrypt from "bcrypt"
 export const signUp = async (req, res, next) => {
     try {
         const { name, email, password, cPassword, phone, gender } = req.body
@@ -14,10 +14,14 @@ export const signUp = async (req, res, next) => {
         if (emailExist) {
             return res.status(409).json({ msg: "Email already exists." })
         }
+        // hash password
+        const hashPassword = bcrypt.hashSync(password, 12)
+        console.log(hashPassword);
 
+        // 
         // create a new user
-        const user = await userModel.create({ name, email, password, phone, gender })
-        
+        const user = await userModel.create({ name, email, password: hashPassword, phone, gender })
+
         return res.status(201).json({ msg: "done", user })
     } catch (error) {
         return res.status(500).json({ msg: "Error: ", message: error.message, stack: error.stack, error });
