@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { signUp } from "./user.service.js";
+import { signIn, signUp } from "./user.service.js";
 
 const userRouter = Router();
 
 
-userRouter.post("/signup", signUp);
+userRouter.post("/signUp", signUp);
+userRouter.post("/signIn", signIn);
 // userRouter.get("/", getUsers);
 // userRouter.patch("/:id", updateUser);
 
