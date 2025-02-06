@@ -1,5 +1,7 @@
 import userModel from "../../DB/models/user.model.js"
 import bcrypt from "bcrypt"
+import CryptoJS from "crypto-js"
+
 export const signUp = async (req, res, next) => {
     try {
         const { name, email, password, cPassword, phone, gender } = req.body
@@ -16,11 +18,13 @@ export const signUp = async (req, res, next) => {
         }
         // hash password
         const hashPassword = bcrypt.hashSync(password, 12)
-        console.log(hashPassword);
+        // console.log(hashPassword);
 
-        // 
+        // encrypt phone
+        const encryptPhone = CryptoJS.AES.encrypt(phone, 'SamyEncrypt').toString();
+
         // create a new user
-        const user = await userModel.create({ name, email, password: hashPassword, phone, gender })
+        const user = await userModel.create({ name, email, password: hashPassword, phone: encryptPhone , gender })
 
         return res.status(201).json({ msg: "done", user })
     } catch (error) {
