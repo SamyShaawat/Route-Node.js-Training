@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
-const dbName = "saraha"
+
 
 const connectionDB = async () => {
-    await mongoose.connect(`mongodb://localhost:27017/${dbName}`)
+    await mongoose.connect(process.env.URI_CONNECTION)
         .then(() => {
-            console.log(`Connected to MongoDB ${dbName} ...`);
+            console.log(`Connected to MongoDB ${process.env.DB_Name} ...`);
         })
         .catch((err) => {
             console.log("Error connecting to MongoDB: ", err);

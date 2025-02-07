@@ -18,11 +18,11 @@ export const signUp = async (req, res, next) => {
             return res.status(409).json({ msg: "Email already exists." })
         }
         // hash password
-        const hashPassword = bcrypt.hashSync(password, 12)
+        const hashPassword = bcrypt.hashSync(password, Number(process.env.SALT_ROUNDS))
         // console.log(hashPassword);
 
         // encrypt phone
-        const encryptPhone = CryptoJS.AES.encrypt(phone, 'SamyEncrypt').toString();
+        const encryptPhone = CryptoJS.AES.encrypt(phone, process.env.SIGNATURE).toString();
 
         // create a new user
         const user = await userModel.create({ name, email, password: hashPassword, phone: encryptPhone, gender })
@@ -45,10 +45,10 @@ export const signIn = async (req, res, next) => {
 
         const match = bcrypt.compareSync(password, user.password)
         if (!match) {
-            return res.status(400).json({ msg: "invalid Password" })
+            return res.status(400).json({ msg: "Invalid Password" })
         }
 
-        const token = jwt.sign({ email }, "secretKeySamy", { expiresIn: "1h" })
+        const token = jwt.sign({ email }, process.env.SECRET_KEY, { expiresIn: "1h" })
 
         return res.status(201).json({ msg: "done", token })
     } catch (error) {
@@ -61,14 +61,18 @@ export const getProfile = async (req, res, next) => {
     try {
         const { authorization } = req.headers
         if (!authorization) {
-            return res.status(400).json({ msg: "token not found" })
+            return res.status(401).json({ msg: "Token is required" })
         }
-        const decoded = jwt.verify(authorization, "secretKeySamy")
+        const decoded = jwt.verify(authorization, process.env.SECRET_KEY)
+
+        if(!decoded?.id){
+            return res.status(401).json({ msg: "Invalid token" })
+        }
         const user = await userModel.findOne({ email: decoded.email }).select("-password").lean()
         if (!user) {
-            return res.status(400).json({ msg: "user not found" })
+            return res.status(404).json({ msg: "User not found" })
         }
-        const phone = CryptoJS.AES.decrypt(user.phone, "SamyEncrypt").toString(CryptoJS.enc.Utf8);
+        const phone = CryptoJS.AES.decrypt(user.phone, process.env.SIGNATURE).toString(CryptoJS.enc.Utf8);
         return res.status(201).json({ msg: "done", ...user, phone })
     } catch (error) {
         return res.status(500).json({ msg: "Error: ", message: error.message, stack: error.stack, error });
