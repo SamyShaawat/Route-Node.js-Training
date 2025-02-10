@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getProfile, signIn, signUp } from "./user.service.js";
+import { confirmEmail, getProfile, signIn, signUp } from "./user.service.js";
 import { authentication } from "../../middleware/auth.js";
 
 const userRouter = Router();
@@ -7,8 +7,10 @@ const userRouter = Router();
 
 userRouter.post("/signUp", signUp);
 userRouter.post("/signIn", signIn);
+
+userRouter.get("/confirmEmail/:token", confirmEmail);
 userRouter.get("/getProfile", authentication, getProfile);
-// userRouter.patch("/:id", updateUser);
+
 
 
 

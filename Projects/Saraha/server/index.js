@@ -9,10 +9,6 @@ const port = process.env.PORT || 3000;
 // console.log(process.env.PORT);
 
 
-
-
-
-
 const app = express();
 
 bootstrap(app, express);

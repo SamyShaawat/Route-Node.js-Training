@@ -2,6 +2,7 @@ import userModel from "../../DB/models/user.model.js"
 import bcrypt from "bcrypt"
 import CryptoJS from "crypto-js"
 import jwt from "jsonwebtoken"
+import { sendEmail } from "../../service/sendEmails.js"
 
 export const signUp = async (req, res, next) => {
     try {
@@ -24,6 +25,15 @@ export const signUp = async (req, res, next) => {
         // encrypt phone
         const encryptPhone = CryptoJS.AES.encrypt(phone, process.env.SECRET_KEY).toString();
 
+        // send email to confirm
+        const token = jwt.sign({ email }, process.env.SIGNATURE_CONFIRMATION)
+        const link = `http://localhost:3000/users/confirmEmail/${token}`
+        // or const link = `https://localhost:3000/users/confirmEmail/email?${token}`
+
+        const emailSender = await sendEmail(email, "Confirm Email", `<a href='${link}' >Confirm me</a>`)
+        if (!emailSender) {
+            return res.status(500).json({ msg: "Failed to send Email" });
+        }
         // create a new user
         const user = await userModel.create({ name, email, password: hashPassword, phone: encryptPhone, gender })
 
@@ -34,13 +44,38 @@ export const signUp = async (req, res, next) => {
     }
 }
 
+export const confirmEmail = async (req, res, next) => {
+    try {
+        const { token } = req.params
+
+        if (!token) {
+            return res.status(400).json({ msg: "Token not found" })
+        }
+        const decoded = jwt.verify(token, process.env.SIGNATURE_CONFIRMATION)
+        if (!decoded?.email) {
+            return res.status(400).json({ msg: "Invalid token payload" })
+        }
+        const user = await userModel.findOneAndUpdate(
+            { email: decoded.email, confirmed: false},
+            {confirmed: true}
+        )
+        if (!user) {
+            return res.status(400).json({ msg: "User not found or already confirmed" })
+        }
+        return res.status(201).json({ msg: "done" })
+    } catch (error) {
+        return res.status(500).json({ msg: "Error: ", message: error.message, stack: error.stack, error });
+
+    }
+}
+
 export const signIn = async (req, res, next) => {
     try {
         const { email, password } = req.body
         // check email 
-        const user = await userModel.findOne({ email })
+        const user = await userModel.findOne({ email, confirmed: true})
         if (!user) {
-            return res.status(400).json({ msg: "Invalid Email" })
+            return res.status(400).json({ msg: "Email not exists or not confirmed yet " })
         }
 
         const match = bcrypt.compareSync(password, user.password)
