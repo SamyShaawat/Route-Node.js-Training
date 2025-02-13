@@ -12,13 +12,15 @@ export const signUp = asyncHandler(async (req, res, next) => {
 
     // check password match or not
     if (password !== cPassword) {
-        return res.status(400).json({ msg: "Passwords do not match." })
+        return next(new Error("Passwords do not match."), { cause: 400 })
+        // return res.status(400).json({ msg: "Passwords do not match." })
     }
 
     // check email exist or not 
     const emailExist = await userModel.findOne({ email })
     if (emailExist) {
-        return res.status(409).json({ msg: "Email already exists." })
+        return next(new Error("Email already exists."), { cause: 409 })
+        // return res.status(409).json({ msg: "Email already exists." })
     }
     // hash password
     const hashPassword = bcrypt.hashSync(password, Number(process.env.SALT_ROUNDS))
@@ -34,7 +36,8 @@ export const signUp = asyncHandler(async (req, res, next) => {
 
     const emailSender = await sendEmail(email, "Confirm Email", `<a href='${link}' >Confirm me</a>`)
     if (!emailSender) {
-        return res.status(500).json({ msg: "Failed to send Email" });
+        return next(new Error("Failed to send Email"), { cause: 500 })
+        // return res.status(500).json({ msg: "Failed to send Email" });
     }
     // create a new user
     const user = await userModel.create({ name, email, password: hashPassword, phone: encryptPhone, gender })
@@ -47,18 +50,21 @@ export const confirmEmail = asyncHandler(async (req, res, next) => {
     const { token } = req.params
 
     if (!token) {
-        return res.status(400).json({ msg: "Token not found" })
+        return next(new Error("Token not found"), { cause: 400 })
+        // return res.status(400).json({ msg: "Token not found" })
     }
     const decoded = jwt.verify(token, process.env.SIGNATURE_CONFIRMATION)
     if (!decoded?.email) {
-        return res.status(400).json({ msg: "Invalid token payload" })
+        return next(new Error("Invalid token payload"), { cause: 400 })
+        // return res.status(400).json({ msg: "Invalid token payload" })
     }
     const user = await userModel.findOneAndUpdate(
         { email: decoded.email, confirmed: false },
         { confirmed: true }
     )
     if (!user) {
-        return res.status(400).json({ msg: "User not found or already confirmed" })
+        return next(new Error("User not found or already confirmed"), { cause: 400 })
+        // return res.status(400).json({ msg: "User not found or already confirmed" })
     }
     return res.status(201).json({ msg: "done" })
 
@@ -69,12 +75,14 @@ export const signIn = asyncHandler(async (req, res, next) => {
     // check email 
     const user = await userModel.findOne({ email, confirmed: true })
     if (!user) {
-        return res.status(400).json({ msg: "Email not exists or not confirmed yet " })
+        return next(new Error("Email not exists or not confirmed yet"), { cause: 400 })
+        // return res.status(400).json({ msg: "Email not exists or not confirmed yet " })
     }
 
     const match = bcrypt.compareSync(password, user.password)
     if (!match) {
-        return res.status(400).json({ msg: "Invalid Password" })
+        return next(new Error("Invalid Password"), { cause: 400 })
+        // return res.status(400).json({ msg: "Invalid Password" })
     }
 
     const token = jwt.sign(

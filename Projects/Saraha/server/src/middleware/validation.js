@@ -15,6 +15,7 @@ export const validation = (schema) => {
 
         }
         if (validationResult.length > 0) {
+            // return next(new Error("Email not exists or not confirmed yet"), { cause: 400 })
             return res.status(400).json({ msg: "Validation Error: ", errors: validationResult });
         }
         next();
