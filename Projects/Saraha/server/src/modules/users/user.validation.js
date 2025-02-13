@@ -13,6 +13,7 @@ export const signUpSchema = {
         cPassword: joi.string().valid(joi.ref("password")),
         gender: joi.string().valid("Male", "Female"),
         phone: joi.string().regex(/^01[0125][0-9]{8}$/),
+        role: joi.string()
         // id: generalRules.objectId 
 
         // object
