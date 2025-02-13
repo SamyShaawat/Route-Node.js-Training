@@ -4,7 +4,15 @@ import CryptoJS from "crypto-js"
 import jwt from "jsonwebtoken"
 import { sendEmail } from "../../service/sendEmails.js"
 
-export const signUp = async (req, res, next) => {
+
+const asyncHandler = (fn) => {
+    return (req, res, next) => {
+        fn(req, res, next).catch((error) => {
+            return res.status(500).json({ msg: "server error: ", message: error.message, stack: error.stack, error })
+        })
+    }
+}
+export const signUp = asyncHandler(async (req, res, next) => {
     try {
         const { name, email, password, cPassword, phone, gender } = req.body
 
@@ -42,9 +50,9 @@ export const signUp = async (req, res, next) => {
         return res.status(500).json({ msg: "Error: ", message: error.message, stack: error.stack, error });
 
     }
-}
+})
 
-export const confirmEmail = async (req, res, next) => {
+export const confirmEmail = asyncHandler(async (req, res, next) => {
     try {
         const { token } = req.params
 
@@ -67,9 +75,9 @@ export const confirmEmail = async (req, res, next) => {
         return res.status(500).json({ msg: "Error: ", message: error.message, stack: error.stack, error });
 
     }
-}
+})
 
-export const signIn = async (req, res, next) => {
+export const signIn = asyncHandler(async (req, res, next) => {
     try {
         const { email, password } = req.body
         // check email 
@@ -94,9 +102,9 @@ export const signIn = async (req, res, next) => {
         return res.status(500).json({ msg: "Error: ", message: error.message, stack: error.stack, error });
 
     }
-}
+})
 
-export const getProfile = async (req, res, next) => {
+export const getProfile = asyncHandler(async (req, res, next) => {
     try {
         //const phone = CryptoJS.AES.decrypt(user.phone, process.env.SECRET_KEY).toString(CryptoJS.enc.Utf8);
         return res.status(201).json({ msg: "done", user: req.user });
@@ -104,4 +112,4 @@ export const getProfile = async (req, res, next) => {
         return res.status(500).json({ msg: "Error: ", message: error.message, stack: error.stack, error });
 
     }
-}
+})
