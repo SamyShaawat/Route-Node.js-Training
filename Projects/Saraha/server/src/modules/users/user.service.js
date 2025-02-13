@@ -4,41 +4,32 @@ import CryptoJS from "crypto-js"
 import jwt from "jsonwebtoken"
 import { sendEmail } from "../../service/sendEmails.js"
 import { asyncHandler } from "../../utils/errorHandling.js"
+import { eventEmitter } from "../../utils/sendEmail.event.js"
 
 
 
 export const signUp = asyncHandler(async (req, res, next) => {
-    const { name, email, password, cPassword, phone, gender } = req.body
+    const { name, email, password, cPassword, phone, gender } = req.body;
 
-    // check email exist or not 
-    const emailExist = await userModel.findOne({ email })
+    // Check if email exists
+    const emailExist = await userModel.findOne({ email });
     if (emailExist) {
-        return next(new Error("Email already exists."), { cause: 409 })
-        // return res.status(409).json({ msg: "Email already exists." })
+        return next(new Error("Email already exists."), { cause: 409 });
     }
-    // hash password
-    const hashPassword = bcrypt.hashSync(password, Number(process.env.SALT_ROUNDS))
-    // console.log(hashPassword);
 
-    // encrypt phone
+    // Hash password
+    const hashPassword = bcrypt.hashSync(password, Number(process.env.SALT_ROUNDS));
+
+    // Encrypt phone
     const encryptPhone = CryptoJS.AES.encrypt(phone, process.env.SECRET_KEY).toString();
 
-    // send email to confirm
-    const token = jwt.sign({ email }, process.env.SIGNATURE_CONFIRMATION)
-    const link = `http://localhost:3000/users/confirmEmail/${token}`
-    // or const link = `https://localhost:3000/users/confirmEmail/email?${token}`
+    eventEmitter.emit("sendEmail", { email });
 
-    const emailSender = await sendEmail(email, "Confirm Email", `<a href='${link}' >Confirm me</a>`)
-    if (!emailSender) {
-        return next(new Error("Failed to send Email"), { cause: 500 })
-        // return res.status(500).json({ msg: "Failed to send Email" });
-    }
-    // create a new user
-    const user = await userModel.create({ name, email, password: hashPassword, phone: encryptPhone, gender })
+    // Create user
+    const user = await userModel.create({ name, email, password: hashPassword, phone: encryptPhone, gender });
 
-    return res.status(201).json({ msg: "done" })
-
-})
+    return res.status(201).json({ msg: "done", user });
+});
 
 export const confirmEmail = asyncHandler(async (req, res, next) => {
     const { token } = req.params
