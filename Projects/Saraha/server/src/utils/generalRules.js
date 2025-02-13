@@ -1,13 +1,13 @@
 import joi from "joi";
 import { Types } from "mongoose";
 
-export const customId = (value, helper) => {
-    let data = Types.ObjectId.isValid(value);
-    return data ? value : helper.message("id is not valid")
+export const idValidation = (value, helper) => {
+    let isValidId = Types.ObjectId.isValid(value);
+    return isValidId ? value : helper.message("id is not valid")
 }
 
 export const generalRules = {
-    objectId: joi.string().custom(customId),
+    objectId: joi.string().custom(idValidation),
     
     // email: joi.string().email({ tlds: { allow: false, deny:["com", "net"] }, minDomainSegments: 2, maxDomainSegments: 3 }),
     

@@ -10,12 +10,6 @@ import { asyncHandler } from "../../utils/errorHandling.js"
 export const signUp = asyncHandler(async (req, res, next) => {
     const { name, email, password, cPassword, phone, gender } = req.body
 
-    // check password match or not
-    if (password !== cPassword) {
-        return next(new Error("Passwords do not match."), { cause: 400 })
-        // return res.status(400).json({ msg: "Passwords do not match." })
-    }
-
     // check email exist or not 
     const emailExist = await userModel.findOne({ email })
     if (emailExist) {
@@ -50,12 +44,12 @@ export const confirmEmail = asyncHandler(async (req, res, next) => {
     const { token } = req.params
 
     if (!token) {
-        return next(new Error("Token not found"), { cause: 400 })
+        return next(new Error("Token not found"), { cause: 404 })
         // return res.status(400).json({ msg: "Token not found" })
     }
     const decoded = jwt.verify(token, process.env.SIGNATURE_CONFIRMATION)
     if (!decoded?.email) {
-        return next(new Error("Invalid token payload"), { cause: 400 })
+        return next(new Error("Invalid token payload"), { cause: 404 })
         // return res.status(400).json({ msg: "Invalid token payload" })
     }
     const user = await userModel.findOneAndUpdate(

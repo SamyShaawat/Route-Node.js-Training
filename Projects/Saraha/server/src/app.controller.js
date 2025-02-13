@@ -5,19 +5,24 @@ import { globalErrorHandler } from "./utils/errorHandling.js";
 
 
 const bootstrap = async (app, express) => {
+
+    // use json middleware for parsing request data
     app.use(express.json());
-
-    connectionDB();
-
+    
+    // application routes
     app.use("/users", userRouter);
     app.use("/messages", messageRouter);
+    
+    // connect to database
+    connectionDB();
 
+    // unHandle routes
     app.use("*", (req, res, next) => {
         return next(new Error(`${req.originalUrl} is invalid URL`))
         // res.status(404).json({ message: `${req.originalUrl} not found` });
     })
 
-    // error handling middleware
+    // global error handler
     app.use(globalErrorHandler)
 }
 export default bootstrap;

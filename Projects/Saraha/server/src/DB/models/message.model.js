@@ -1,10 +1,12 @@
-import mongoose  from "mongoose";
+import mongoose from "mongoose";
 
 
 const messageSchema = new mongoose.Schema({
     content: {
-        type: String, 
-        required: true
+        type: String,
+        required: true,
+        minLength: 1,
+        trim: true
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -13,7 +15,7 @@ const messageSchema = new mongoose.Schema({
 
     }
 
-},{timestamps: true});
+}, { timestamps: true });
 
 const messageModel = mongoose.model.Message || mongoose.model("Message", messageSchema);
 

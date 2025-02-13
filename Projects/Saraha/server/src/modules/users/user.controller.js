@@ -9,7 +9,6 @@ const userRouter = Router();
 
 userRouter.post("/signUp", validation(signUpSchema), signUp);
 userRouter.post("/signIn", signIn);
-
 userRouter.get("/confirmEmail/:token", confirmEmail);
 userRouter.get("/getProfile", authentication, getProfile);
 
