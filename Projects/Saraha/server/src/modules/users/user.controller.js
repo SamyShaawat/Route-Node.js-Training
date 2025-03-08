@@ -1,16 +1,16 @@
 import { Router } from "express";
-import { confirmEmail, getProfile, signIn, signUp } from "./user.service.js";
+import * as US from "./user.service.js";
+import * as UV from "./user.validation.js";
 import { authentication } from "../../middleware/auth.js";
 import { validation } from "../../middleware/validation.js";
-import { signUpSchema } from "./user.validation.js";
 
 const userRouter = Router();
 
 
-userRouter.post("/signUp", validation(signUpSchema), signUp);
-userRouter.post("/signIn", signIn);
-userRouter.get("/confirmEmail/:token", confirmEmail);
-userRouter.get("/getProfile", authentication, getProfile);
+userRouter.post("/signUp", validation(UV.signUpSchema), US.signUp);
+userRouter.post("/signIn", US.signIn);
+userRouter.get("/confirmEmail/:token", US.confirmEmail);
+userRouter.get("/getProfile", authentication, US.getProfile);
 
 
 
